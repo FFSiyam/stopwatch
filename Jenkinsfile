@@ -26,27 +26,25 @@ pipeline {
         }
         stage('Dockerfile build') {
             steps {
-                sh "docker build -t '$REPO_LOC':'$BUILD_NUMBER' ."
+                sh "docker build -t '$REPO_LOC':'v$BUILD_NUMBER' ."
             }
         }
         stage('push to repo') {
             steps {
                 withCredentials([file(credentialsId: 'gcloud-cred', variable: 'gcloud-cred')]){
-                     sh '''
-                        docker push '$REPO_LOC':'$BUILD_NUMBER'
-                        '''
+                     sh "docker push ${REPO_LOC}:v$BUILD_NUMBER"
                 }
                
             }
         }
         stage('deploy to run') {
             steps {
-                sh "gcloud run deploy stopwatch --image '$REPO_LOC'/:'$BUILD_NUMBER' --region us-central1"
+                sh "gcloud run deploy stopwatch --image '$REPO_LOC':v'$BUILD_NUMBER' --region us-central1"
             }
         }
         stage('policy binding') {
             steps {
-                sh "gcloud run services add-iam-policy-binding jenkins \
+                sh "gcloud run services add-iam-policy-binding stopwatch \
                     --member='serviceAccount:jenkinspipeline@sanbox-credit.iam.gserviceaccount.com' \
                     --region='us-central1' \
                     --member='allUsers' \
