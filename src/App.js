@@ -7,9 +7,7 @@ class App extends Component {
     return (
       <div className="App-Container">
         <div className="App">
-          <h1 style={{ color: "white", fontSize: "100px" }}>
-            Fahim Faysal Siyam{" "}
-          </h1>
+          <h2 style={{ color: "white", fontSize: "100px" }}>Calculator</h2>
           <Stopwatch />
         </div>
       </div>
